@@ -28,6 +28,7 @@ export async function POST(request: Request) {
         }
 
         const existingUserByEmail = await UserModel.findOne({ email });
+        let verifyCode: string;
 
         if (existingUserByEmail) {
             if (existingUserByEmail.isVerified) {
@@ -40,7 +41,8 @@ export async function POST(request: Request) {
                 const hash = hashSync(password, salt);
 
                 existingUserByEmail.password = hash;
-                existingUserByEmail.verifyCode = generateVerificationCode();
+                verifyCode = generateVerificationCode();
+                existingUserByEmail.verifyCode = verifyCode;
                 existingUserByEmail.verifyCodeExpiry = expiryDate;
 
                 await existingUserByEmail.save();
@@ -49,11 +51,12 @@ export async function POST(request: Request) {
             const salt = genSaltSync(10);
             const hash = hashSync(password, salt);
 
+            verifyCode = generateVerificationCode();
             const newUser = new UserModel({
                 username,
                 email,
                 password: hash,
-                verifyCode: generateVerificationCode(),
+                verifyCode: verifyCode,
                 verifyCodeExpiry: expiryDate,
                 isVerified: false,
                 isAcceptingMessage: true,
@@ -61,22 +64,21 @@ export async function POST(request: Request) {
             });
 
             await newUser.save();
-        
         }    
 
         const emailResponse = await sendVerificationEmail(email, username, verifyCode);
 
-         if (!emailResponse.success) {
-             return new Response(
-                 JSON.stringify({ success: false, message: emailResponse.message }),
-                 { status: 500 }
-             );
-         }
+        if (!emailResponse.success) {
+            return new Response(
+                JSON.stringify({ success: false, message: emailResponse.message }),
+                { status: 500 }
+            );
+        }
 
-         return new Response(
-             JSON.stringify({ success: true, message: "User registered successfully and verification email sent" }),
-             { status: 201 }
-         );
+        return new Response(
+            JSON.stringify({ success: true, message: "User registered successfully and verification email sent" }),
+            { status: 201 }
+        );
         
     } catch (error) {
         console.error("Error during registration:", error);
