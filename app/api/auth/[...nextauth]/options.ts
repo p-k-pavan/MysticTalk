@@ -26,7 +26,7 @@ export const authOptions : NextAuthOptions = {
                         throw new Error('No user found with this email')
                     }
                     if(!user.isVerified){
-                        throw new Error('Please verify brfore login to your account')
+                        throw new Error('Please verify brfore login to your account or Sign up again to verify')
                     }
                     const isPassword = await compareSync(credentials.password,user.password);
                     if(isPassword){
