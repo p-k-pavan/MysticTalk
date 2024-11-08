@@ -4,7 +4,7 @@ import { z } from "zod";
 import { usernameValidation } from "@/schemas/signUpSchema";
 
 const UsernameQuerySchema = z.object({
-    username: usernameValidation
+    username: usernameValidation.nonempty("Username is required")
 });
 
 export async function GET(request: Request) {
@@ -13,19 +13,19 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const queryParam = {
-            username: searchParams.get('username')
+            username: searchParams.get('username') || ''
         };
 
         const result = UsernameQuerySchema.safeParse(queryParam);
-        console.log(result);
 
         if (!result.success) {
-            return Response.json(
-                {
+            return new Response(
+                JSON.stringify({
                     success: false,
-                    message: "Special characters are not allowed; only A-Z, a-z, -, and _ are permitted."
-                },
-                { status: 400 }
+                    message: result.error.errors[0]?.message || 
+                      "Invalid username"
+                }),
+                { status: 400, headers: { "Content-Type": "application/json" }}
             );
         }
 
@@ -33,31 +33,31 @@ export async function GET(request: Request) {
         const existingUser = await UserModel.findOne({ username, isVerified: true });
 
         if (existingUser) {
-            return Response.json(
-                {
+            return new Response(
+                JSON.stringify({
                     success: false,
                     message: "Username is already taken"
-                },
-                { status: 400 }
+                }),
+                { status: 400, headers: { "Content-Type": "application/json" }}
             );
         } else {
-            return Response.json(
-                {
+            return new Response(
+                JSON.stringify({
                     success: true,
                     message: "Username is available"
-                },
-                { status: 200 }
+                }),
+                { status: 200, headers: { "Content-Type": "application/json" }}
             );
         }
 
     } catch (error) {
         console.error("Error checking username", error);
-        return Response.json(
-            {
+        return new Response(
+            JSON.stringify({
                 success: false,
                 message: "Error checking username"
-            },
-            { status: 500 }
+            }),
+            { status: 500, headers: { "Content-Type": "application/json" }}
         );
     }
 }
