@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import AuthProvider from "@/context/AuthProvider"
-import { Toaster } from "@/components/ui/toaster"
+import NavBar from "@/components/NavBar"
 
 
 
@@ -16,14 +15,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <AuthProvider>
+    <html lang="en"> 
       <body>
+      <NavBar />
         {children}
-        <Toaster />
-       
       </body>
-      </AuthProvider>
+      
     </html>
   );
 }

@@ -83,9 +83,9 @@ const SignIn = () => {
               name="identifier"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Identifier</FormLabel>
                   <FormControl>
-                    <Input  placeholder="email" {...field} />
+                    <Input  placeholder="email/username" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

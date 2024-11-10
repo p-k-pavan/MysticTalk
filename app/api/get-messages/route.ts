@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     await dbConnect();
     
     const session = await getServerSession(authOptions);
-    const user: User = session?.user;
+    const user: User = session?.user as User;
 
     if (!session || !session.user) {
         return Response.json(
