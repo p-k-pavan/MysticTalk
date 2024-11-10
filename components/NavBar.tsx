@@ -10,7 +10,7 @@ const NavBar = () => {
   const user: User = session?.user as User
 
   return (
-    <nav className='p-4 md:p-6 shadow-md'>
+    <nav className='p-3 shadow-md bg-slate-200'>
       <div className='container mx-auto flex flex-col
       md:flex-row justify-between items-center'>
      <div>

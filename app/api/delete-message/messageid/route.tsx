@@ -28,7 +28,7 @@ export async function DELETE(request: Request,
         {_id:user._id},
         {$pull: {messages: {_id: messageId}}}
        )
-       if(response.modifiedCout == 0){
+       if(response.modifiedCount == 0){
 
         return Response.json(
             {
