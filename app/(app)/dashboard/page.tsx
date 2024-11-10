@@ -104,7 +104,7 @@ const Dashboard = () => {
   };
   
 
-  // User Profile URL
+  
   const username  = session?.user?.username;
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const profileUrl = `${baseUrl}/u/${username}`;
@@ -117,7 +117,7 @@ const Dashboard = () => {
     });
   };
 
-  // Render login prompt if user is not logged in
+  
   if (!session || !session.user) {
     return (
       <div className="flex justify-center items-center h-screen">
