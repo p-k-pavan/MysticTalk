@@ -6,6 +6,7 @@ import axios, { AxiosError } from "axios";
 import { ApiResponse } from "@/types/ApiResponse";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 const Page = () => {
   const params = useParams();
@@ -97,7 +98,9 @@ const Page = () => {
           onClick={handleSuggestMessage}
           disabled={isLoadingMessages}
         >
+
           Suggest Messages
+          {isLoadingMessages ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : ""}
         </Button>
         <p>Click on any message below to select it.</p>
         <div className="flex flex-col border p-8 mt-3 w-[90%] md:w-[70%] mb-4">
