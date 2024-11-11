@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import { Button } from "@/components/ui/button"
-import { X } from 'lucide-react';
 import { Message } from "@/model/User"
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios"

@@ -14,8 +14,8 @@ const NavBar = () => {
       <div className='container mx-auto flex flex-col
       md:flex-row justify-between items-center'>
      <div>
-     <a href="/"
-        className="text-xl font-bold mb-4 md:mb-0">MysticTalk</a>
+     <Link href="/"
+        className="text-xl font-bold mb-4 md:mb-0">MysticTalk</Link>
      </div>
         {session ? (
           <>
