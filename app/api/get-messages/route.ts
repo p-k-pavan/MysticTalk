@@ -1,58 +1,70 @@
 import { getServerSession, User } from "next-auth";
 import UserModel from "@/model/User";
 import dbConnect from "@/lib/dbConnect";
-import { authOptions } from "../auth/[...nextauth]/options";
+import { authOptions } from "../../auth/[...nextauth]/options";
+import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 
-export async function GET(request: Request) {
+export async function DELETE(
+    request: Request,
+    { params }: { params: { messageid: string } }
+) {
+    const { messageid: messageId } = params;
+
+    if (!messageId) {
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Message ID is required",
+            },
+            { status: 400 }
+        );
+    }
+
     await dbConnect();
-    
+
     const session = await getServerSession(authOptions);
     const user: User = session?.user as User;
 
     if (!session || !session.user) {
-        return Response.json(
+        return NextResponse.json(
             {
                 success: false,
-                message: "Not Authenticated"
+                message: "Not Authenticated",
             },
             { status: 401 }
         );
     }
 
-    const userId = new mongoose.Types.ObjectId(user._id);
-
     try {
-        const userMessages = await UserModel.aggregate([
-            { $match: { _id: userId } },
-            { $unwind: '$messages' },
-            { $sort: { 'messages.createdAt': -1 } },
-            { $group: { _id: '$_id', messages: { $push: '$messages' } } }
-        ]);
+        const response = await UserModel.updateOne(
+            { _id: user._id },
+            { $pull: { messages: { _id: messageId } } }
+        );
 
-        if (!userMessages || userMessages.length === 0) {
-            return Response.json(
+        if (response.modifiedCount === 0) {
+            return NextResponse.json(
                 {
                     success: false,
-                    message: "No messages found"
+                    message: "Message not found or already deleted",
                 },
-                { status: 404 }
-            );
-        } else {
-            return Response.json(
-                {
-                    success: true,
-                    messages: userMessages[0].messages
-                },
-                { status: 200 }
+                { status: 400 }
             );
         }
+
+        return NextResponse.json(
+            {
+                success: true,
+                message: "Message deleted successfully",
+            },
+            { status: 200 }
+        );
     } catch (error) {
-        console.error("Error getting messages:", error);
-        return Response.json(
+        console.error("Error deleting message:", error);
+        return NextResponse.json(
             {
                 success: false,
-                message: "Internal server error"
+                message: "Internal server error for deleting message",
             },
             { status: 500 }
         );
